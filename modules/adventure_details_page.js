@@ -2,7 +2,7 @@ import config from "../conf/index.js";
 
 function routeToKart(){
   window.open(
-  "https://qkart-frontend-selva.netlify.app/", "_blank");
+  "https://qkart-prasath.netlify.app/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
 }
 
 
