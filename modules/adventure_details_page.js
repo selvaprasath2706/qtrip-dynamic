@@ -1,6 +1,11 @@
 import config from "../conf/index.js";
 
+
 function routeToKart(){
+  // http://192.168.10.108:8081/  
+  // window.open(
+  //   "http://192.168.10.108:8081/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
+  
   window.open(
   "https://qkart-prasath.netlify.app/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
 }
@@ -144,6 +149,22 @@ function calculateReservationCostAndUpdateDOM(adventure, persons) {
   document.getElementById("reservation-cost").innerHTML=adventure.costPerHead*persons;
 }
 
+
+
+const validateResponse = (errored, response, couldNot) => {
+  if (errored) {
+    // message.error(
+    //   `Could not ${couldNot}. Check that the backend is running, reachable and returns valid JSON.`
+    // );
+    return false;
+  }
+  if (response.message) {
+    // message.error(response.message);
+    return false;
+  }
+  return true;
+};
+
 //Implementation of reservation form submission
 function captureFormSubmit(adventure) {
   // TODO: MODULE_RESERVATIONS
@@ -155,29 +176,112 @@ function captureFormSubmit(adventure) {
   let name = form.elements["name"].value;
   let date=form.elements["date"].value;
   let person=form.elements["person"].value;
+  let cost=parseInt(document.getElementById("reservation-cost").innerText);
+  console.log(cost)
   let reservations={
     name:name,
     date:date,
     person:person,
     adventure:adventure.id
   };
-   fetch(config.backendEndpoint+"/reservations/new/", {
-    method: "POST",
-    body: JSON.stringify(reservations),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8"
-    }
-  }).then((response) =>{
-    if (!response.ok) {
-      throw Error(response.status);
-     }
-     return response.json();
-  }).then(update => {
-    alert("success");
-    window.location.reload()
-    }).catch(e => {
-    alert("failed");
+
+
+  var options={
+    key:"rzp_test_r5YSzVJZPC3wxh",
+    key_secret:"FmLRPUjsVe1Swh3gAisYVLhw",
+    amount:cost*100,
+    currency:"INR",
+    name:"QTRIP-KART",
+    description:"Payment gateway",
+    handler:(response)=>{
+      (async () => {
+        let response = {};
+        let errored = false;
+
+        response =  await fetch(config.backendEndpoint+"/reservations/new/", {
+          method: "POST",
+          body: JSON.stringify(reservations),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        }).then((response) =>{
+          if (!response.ok) {
+            throw Error(response.status);
+           }
+           return response.json();
+        }).then(update => {
+          alert("success");
+          window.location.reload()
+          }).catch(e => {
+          alert("failed");
+          });
+        //  try {
+        //   response = await fetch(`${config.endpoint}/cart/checkout`, {
+        //     method: "PUT",
+        //     headers: {
+        //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+        //       "Content-Type": "application/json",
+        //     },
+        //   });
+        // } catch (e) {
+        //   errored = true;
+        //   console.log(e);
+        // }
+        
+        let data;
+        if (response.status !== 204) {
+          data = await response.json();
+        }
+        if (response.status === 204 || validateResponse(errored, data)) {
+          window.alert("success")
+          }
+
+    })().catch(err => {
+        console.error(err);
     });
+      
+      
+    },
+    prefill:{
+      name:"Selva Prasath",
+      email:"selvaprasath.22it@licet.ac.in",
+      contact:"8098162758",
+    },
+    notes:{
+      address:"Razorpay Corp"
+    },
+    theme:{
+      color:"#3399cc"
+    }
+  }
+  var pay= new window.Razorpay(options)
+
+  // let reservations={
+  //   name:name,
+  //   date:date,
+  //   person:person,
+  //   adventure:adventure.id
+  // };
+  console.log(reservations.date
+    )
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    today = yyyy + '-' + mm + '-' + dd ;
+console.log(today)
+  if(reservations.date>=today){
+    document.getElementById("notify_date_error").innerHTML=""
+
+    pay.open()
+  }
+  else{
+    document.getElementById("notify_date_error").innerHTML="you can book only for upcomming dates"
+  }
+ 
+
+
+   
 })
  
 }
