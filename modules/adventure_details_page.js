@@ -7,7 +7,7 @@ function routeToKart(){
   //   "http://192.168.10.108:8081/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
   
   window.open(
-  "https://qkart-prasath.netlify.app/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
+  "https://q-tripkart-kart.netlify.app/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
 }
 
 
