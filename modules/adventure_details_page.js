@@ -2,10 +2,7 @@ import config from "../conf/index.js";
 
 
 function routeToKart(){
-  // http://192.168.10.108:8081/  
-  // window.open(
-  //   "http://192.168.10.108:8081/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
-  
+
   window.open(
   "https://q-tripkart-kart.netlify.app/adventures/"+getAdventureIdFromURL(window.location.search), "_blank");
 }
