@@ -8,7 +8,7 @@ async function init() {
       addCityToDOM(key.id, key.city, key.description, key.image);
     });
   
- document.getElementById("empty").innerHTML="Data not Available"
+//  document.getElementById("empty").innerHTML="Data not Available"
 }
 
 
